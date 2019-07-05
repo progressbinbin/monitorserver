@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="monitorclient:jar">
+    <output-path>E:/spring/client</output-path>
+    <root id="archive" name="monitorserver.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="E:/spring/client/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="monitorserver" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jboss/marshalling/jboss-marshalling-serial/2.0.7.Final/jboss-marshalling-serial-2.0.7.Final.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/log4j/log4j/1.2.15/log4j-1.2.15.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/netty/netty-all/5.0.0.Alpha2/netty-all-5.0.0.Alpha2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jboss/marshalling/jboss-marshalling/2.0.7.Final/jboss-marshalling-2.0.7.Final.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/fusesource/sigar/1.6.4/sigar-1.6.4.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

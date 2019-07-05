@@ -1,0 +1,20 @@
+<component name="ArtifactManager">
+  <artifact name="monitorserver:jar3">
+    <output-path>E:/spring/V3</output-path>
+    <root id="root">
+      <element id="archive" name="monitorserver.jar">
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="E:/spring/V3/META-INF/MANIFEST.MF" />
+        </element>
+        <element id="module-output" name="monitorserver" />
+      </element>
+      <element id="directory" name="lib">
+        <element id="library" level="project" name="Maven: io.netty:netty-all:5.0.0.Alpha2" />
+        <element id="library" level="project" name="Maven: log4j:log4j:1.2.15" />
+        <element id="library" level="project" name="Maven: org.fusesource:sigar:1.6.4" />
+        <element id="library" level="project" name="Maven: org.jboss.marshalling:jboss-marshalling-serial:2.0.7.Final" />
+        <element id="library" level="project" name="Maven: org.jboss.marshalling:jboss-marshalling:2.0.7.Final" />
+      </element>
+    </root>
+  </artifact>
+</component>
