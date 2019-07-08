@@ -1,16 +1,20 @@
 package com.msjwsms.netty.server;
 
 import com.msjwsms.netty.utils.RequestInfo;
+import com.msjwsms.service.HttpClientService;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.http.NameValuePair;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 
 
@@ -65,15 +69,48 @@ public class ServerHandler extends ChannelHandlerAdapter {
         System.out.println(ret);*/
         if (msg instanceof String) {
             String ret = (String) msg;
-            System.out.println("客户端信息："+ret);
+            System.out.println("客户端信息：" + ret);
             auth(ctx, msg);
         } else if (msg instanceof RequestInfo) {
             RequestInfo requestInfo = (RequestInfo) msg;
+            HashMap<String, Object> cpuPercMap = requestInfo.getCpuPercMap();
+            HashMap<String, Object> mem = requestInfo.getMemoryMap();
+            /*调用Http接口,写入信息*/
+            String url = "http://localhost:8083/monitor/save";
+            /**
+             * 参数值
+             */
+            Object[] params = new Object[]{"cli_ip", "cli_name","cli_date","cpu_combined",
+                    "cpu_use","cpu_sys","cpu_wait","cpu_idle","cpu_nice",
+                    "mem_total","mem_used","mem_free"};
+            /**
+             * 参数名
+             */
+            Object[] values = new Object[]{requestInfo.getIp(), "测试",new Date().toLocaleString(),cpuPercMap.get("combined"),
+                    cpuPercMap.get("user"),cpuPercMap.get("sys"),cpuPercMap.get("wait"),cpuPercMap.get("idle"),cpuPercMap.get("nice"),
+                    mem.get("total"),mem.get("used"),mem.get("free")
+            };
+            /**
+             * 获取参数对象
+             */
+            List<NameValuePair> paramsList = HttpClientService.getParams(params, values);
+            /**
+             * 发送get
+             */
+           // Object result = HttpClientService.sendGet(url, paramsList);
+            /**
+             * 发送post
+             */
+            Object result2 = HttpClientService.sendPost(url, paramsList);
+
+            //System.out.println("GET返回信息：" + result);
+            System.out.println("POST返回信息：" + result2);
+
             System.out.println("--------------------------------------");
             System.out.println("当前主机IP:" + requestInfo.getIp());
             System.out.println("--------------------------------------");
             System.out.println("当前主机CPU情况：");
-            HashMap<String, Object> cpuPercMap = requestInfo.getCpuPercMap();
+            //HashMap<String, Object> cpuPercMap = requestInfo.getCpuPercMap();
             System.out.println("总使用率：" + cpuPercMap.get("combined"));
             System.out.println("用户使用率：" + cpuPercMap.get("user"));
             System.out.println("系统使用率:" + cpuPercMap.get("sys"));
@@ -82,7 +119,7 @@ public class ServerHandler extends ChannelHandlerAdapter {
             System.out.println("当前错误率：" + cpuPercMap.get("nice"));
             System.out.println("------------------------------------");
             System.out.println("当前主机内存情况：");
-            HashMap<String, Object> mem = requestInfo.getMemoryMap();
+            //HashMap<String, Object> mem = requestInfo.getMemoryMap();
             System.out.println("内存总量:" + mem.get("total"));
             System.out.println("当前内存使用量：" + mem.get("used"));
             System.out.println("当前内存剩余量：" + mem.get("free"));
