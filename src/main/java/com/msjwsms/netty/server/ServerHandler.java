@@ -1,5 +1,7 @@
 package com.msjwsms.netty.server;
 
+import com.alibaba.fastjson.JSONObject;
+import com.msjwsms.netty.utils.ReadFile;
 import com.msjwsms.netty.utils.RequestInfo;
 import com.msjwsms.service.HttpClientService;
 import io.netty.channel.ChannelFuture;
@@ -12,10 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 
 /**
@@ -25,30 +24,18 @@ public class ServerHandler extends ChannelHandlerAdapter {
 
     private static final HashMap<String,String> AUTH_MAP=new HashMap<>();
     private static final String SUCCESS_KEY="auth_success_key";
+    private static String url;
     static {
-       InputStream stream=null;
-        try {
-            //stream= NettyServerStart.class.getClassLoader().getResourceAsStream("application.yml");
-            File file=new File(System.getProperty("user.dir")+ File.separator+"application.yml");
-            stream=new FileInputStream(file);
-            Properties properties = new Properties();
-            properties.load(stream);
-            System.out.println(properties.get("ips"));
+
+            String path=System.getProperty("user.dir")+ File.separator+"application.yml";
+            Properties properties = ReadFile.getProperties(path);
+            System.out.println("IP集合："+properties.get("ips"));
             String[] ips=properties.get("ips").toString().split(",");
             for(String ip:ips){
                 AUTH_MAP.put(ip,"666666");
             }
-        }catch (IOException ex){
-            ex.printStackTrace();
-        }finally {
-            try{
-                if(stream!=null){
-                    stream.close();
-                }
-            }catch (Exception e){
-                e.printStackTrace();;
-            }
-        }
+        System.out.println("url："+properties.get("url"));
+        url=properties.get("url").toString();
         //AUTH_MAP.put("192.168.0.158","123456");
     }
     @Override
@@ -76,7 +63,7 @@ public class ServerHandler extends ChannelHandlerAdapter {
             HashMap<String, Object> cpuPercMap = requestInfo.getCpuPercMap();
             HashMap<String, Object> mem = requestInfo.getMemoryMap();
             /*调用Http接口,写入信息*/
-            String url = "http://localhost:8083/monitor/save";
+            //String url = "http://localhost:8083/monitor/save";
             /**
              * 参数值
              */
@@ -86,14 +73,15 @@ public class ServerHandler extends ChannelHandlerAdapter {
             /**
              * 参数名
              */
-            Object[] values = new Object[]{requestInfo.getIp(), "测试",new Date().toLocaleString(),cpuPercMap.get("combined"),
+            Object[] values = new Object[]{requestInfo.getIp(), requestInfo.getCname(),new Date().toLocaleString(),cpuPercMap.get("combined"),
                     cpuPercMap.get("user"),cpuPercMap.get("sys"),cpuPercMap.get("wait"),cpuPercMap.get("idle"),cpuPercMap.get("nice"),
                     mem.get("total"),mem.get("used"),mem.get("free")
             };
             /**
              * 获取参数对象
              */
-            List<NameValuePair> paramsList = HttpClientService.getParams(params, values);
+           // List<NameValuePair> paramsList = HttpClientService.getParams(params, values);
+            Map<String,Object> map=HttpClientService.getMap(params,values);
             /**
              * 发送get
              */
@@ -101,7 +89,9 @@ public class ServerHandler extends ChannelHandlerAdapter {
             /**
              * 发送post
              */
-            Object result2 = HttpClientService.sendPost(url, paramsList);
+            //Object result2 = HttpClientService.sendPost(url, paramsList);
+
+            Object result2=HttpClientService.httpPostWithJson(url,JSONObject.toJSONString(map));
 
             //System.out.println("GET返回信息：" + result);
             System.out.println("POST返回信息：" + result2);

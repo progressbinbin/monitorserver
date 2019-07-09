@@ -24,7 +24,7 @@ import java.util.Properties;
 public class NettyServerStart {
     public static void main(String[] args) throws Exception {
 
-        System.out.println(System.getProperty("user.dir"));
+       // System.out.println(System.getProperty("user.dir"));
 /*        Class.getResourceAsStream(String path) ：
 
         path 不以'/'开头时默认是从此类所在的包下取资源，以'/'开头则是从ClassPath(Src根目录)根下获取。

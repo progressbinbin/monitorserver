@@ -8,6 +8,16 @@ import java.util.HashMap;
  */
 public class RequestInfo implements Serializable {
     private String ip;
+    private String cname;
+    public String getCname() {
+        return cname;
+    }
+
+    public void setCname(String cname) {
+        this.cname = cname;
+    }
+
+
     private HashMap<String,Object> cpuPercMap;
     private HashMap<String,Object> memoryMap;
 
@@ -18,6 +28,7 @@ public class RequestInfo implements Serializable {
     public void setIp(String ip) {
         this.ip = ip;
     }
+
 
     public HashMap<String, Object> getCpuPercMap() {
         return cpuPercMap;

@@ -1,5 +1,6 @@
 package com.msjwsms.netty.client;
 
+import com.msjwsms.netty.utils.ReadFile;
 import com.msjwsms.netty.utils.RequestInfo;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -11,9 +12,11 @@ import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.Mem;
 import org.hyperic.sigar.Sigar;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -24,6 +27,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ClientHandler extends ChannelHandlerAdapter {
     private InetAddress address;
+    private String cliname;
     private ScheduledExecutorService scheduledExecutorService= Executors.newScheduledThreadPool(1);
     private ScheduledFuture<?> heartBeat;
     private static final String SUCCESS_KEY="auth_success_key";
@@ -32,7 +36,10 @@ public class ClientHandler extends ChannelHandlerAdapter {
         //super.channelActive(ctx);
         address=InetAddress.getLocalHost();
         String ip=address.getHostAddress();
-        System.out.println("ip地址:"+ip);
+        String path = System.getProperty("user.dir") + File.separator + "application.yml";
+        Properties properties = ReadFile.getProperties(path);
+        cliname =new String(properties.get("cliname").toString().getBytes("ISO-8859-1"),"utf-8");
+        System.out.println("ip地址:"+ip+",名称:"+cliname);
         String key="666666";
         //证书
         String auth_key=ip+","+key;
@@ -79,6 +86,7 @@ public class ClientHandler extends ChannelHandlerAdapter {
             try{
                 RequestInfo requestInfo=new RequestInfo();
                 requestInfo.setIp(address.getHostAddress());
+                requestInfo.setCname(cliname);
                 Sigar sigar=new Sigar();
                 CpuPerc cpuPerc=sigar.getCpuPerc();
                 HashMap<String,Object> cpuPercMap=new HashMap<>();
